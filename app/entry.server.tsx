@@ -6,6 +6,8 @@
 
 import { PassThrough } from "node:stream";
 
+import "../env.config"
+
 import type { AppLoadContext, EntryContext } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
