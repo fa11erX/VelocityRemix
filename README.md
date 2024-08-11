@@ -4,6 +4,7 @@
 ## Tech Stack
 
 - 📖 [Remix](https://remix.run)
+- 📖 [remix-flat-routes](https://github.com/kiliman/remix-flat-routes) for folder routes 
 - 📖 [Bun](https://bun.sh/)
 - ⚡ [Vite](https://vitejs.dev/)
 

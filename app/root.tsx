@@ -12,8 +12,6 @@ import { themeSessionResolver } from "./.server/sessions.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from "remix-themes";
 import clsx from "clsx";
-import Navigation from "./components/navigation";
-
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { getTheme } = await themeSessionResolver(request)
@@ -35,7 +33,6 @@ export function App() {
         <Links />
       </head>
       <body>
-        <Navigation />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
