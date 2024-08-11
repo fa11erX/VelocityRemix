@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import "./tailwind.css";
-import { themeSessionResolver } from "./sessions.server";
+import { themeSessionResolver } from "./.server/sessions.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from "remix-themes";
 import clsx from "clsx";

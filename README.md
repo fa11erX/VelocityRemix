@@ -1,4 +1,4 @@
-# Velocity Remix Starter Kit
+# Velocity Remix Starter Kit (WIP)
 
 
 ## Tech Stack
@@ -12,6 +12,6 @@
 - 🖊️ Tailwind
 - 🖊️ shadcn/ui
 
-## Others
+## Features
 - Validate environnement variables with Zod
 - Support dark mode / light mode
