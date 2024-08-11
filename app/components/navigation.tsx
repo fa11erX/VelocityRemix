@@ -3,8 +3,6 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Link } from "@remix-run/react";
 import { SVGProps } from "react";
 import { JSX } from "react/jsx-runtime";
-import { ModeToggle } from "./mode-toggle";
-
 
 export default function Navigation() {
     return (
@@ -25,8 +23,8 @@ export default function Navigation() {
                         <Link className={buttonVariants({ variant: "link" })} to="/">
                             Home
                         </Link>
-                        <Link className={buttonVariants({ variant: "link" })} to="/">
-                            Todo
+                        <Link className={buttonVariants({ variant: "link" })} to="/dashboard">
+                            Dashboard
                         </Link>
                     </div>
                 </SheetContent>
@@ -43,11 +41,10 @@ export default function Navigation() {
                     Home
                 </Link>
                 <Link
-                    className={buttonVariants({ variant: "link" })} to="/"
+                    className={buttonVariants({ variant: "link" })} to="/dashboard"
                 >
-                    Todo
+                    Dashboard
                 </Link>
-                <ModeToggle />
             </nav>
         </header>
     )

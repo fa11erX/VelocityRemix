@@ -12,6 +12,8 @@
 
 - 🖊️ Tailwind
 - 🖊️ shadcn/ui
+- 🖊️ Framer motion
+
 
 ## Features
 - Validate environnement variables with Zod
