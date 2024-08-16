@@ -6,6 +6,8 @@
 - 🗂️ [**remix-flat-routes**](https://github.com/kiliman/remix-flat-routes) - For simple and efficient folder-based routing.
 - ⚡ [**Bun**](https://bun.sh/) - The ultra-fast runtime for JavaScript and TypeScript.
 - ⚡ [**Vite**](https://vitejs.dev/) - The incredibly fast bundler for instant development.
+- 🗄️ [**Prisma**](https://www.prisma.io/) - The modern database toolkit for TypeScript and Node.js.
+- 🔒 [**Remix Auth**](https://github.com/sergiodxa/remix-auth) - Authentication for Remix apps with various strategies.
 
 ## 🎨 **UI**
 
