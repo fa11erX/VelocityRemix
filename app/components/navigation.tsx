@@ -40,7 +40,7 @@ export default function Navigation() {
                 >
                     Home
                 </Link>
-                <Link className={buttonVariants({ variant: "default" })} to="/signIn" >
+                <Link className={buttonVariants({ variant: "default" })} to="/auth" >
                     Sign in
                 </Link>
                 {/* <Link
