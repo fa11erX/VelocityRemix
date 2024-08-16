@@ -3,7 +3,7 @@ import { Outlet } from "@remix-run/react";
 
 export default function Index() {
     return (
-      <div>
+      <div className="">
         <Navigation />
         <Outlet />
       </div>

@@ -40,11 +40,14 @@ export default function Navigation() {
                 >
                     Home
                 </Link>
-                <Link
+                <Link className={buttonVariants({ variant: "default" })} to="/signIn" >
+                    Sign in
+                </Link>
+                {/* <Link
                     className={buttonVariants({ variant: "link" })} to="/dashboard"
                 >
                     Dashboard
-                </Link>
+                </Link> */}
             </nav>
         </header>
     )
