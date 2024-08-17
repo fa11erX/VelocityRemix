@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
+import { H2 } from "@/components/ui/typographie";
 
 const formSchema = z.object({
   email: z.string().min(2, {
@@ -46,6 +47,7 @@ function CreateAccountForm() {
 
   return (
     <Form {...form}>
+      <H2>Create account</H2>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
