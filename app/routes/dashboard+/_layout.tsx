@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/mode-toggle";
 import { SidebarBody, SidebarLink, Sidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils/cn";
 import { Link, Outlet } from "@remix-run/react";
@@ -72,6 +73,7 @@ export default function DashboardLayout() {
                 ),
               }}
             />
+            <ModeToggle />
           </div>
         </SidebarBody>
       </Sidebar>
