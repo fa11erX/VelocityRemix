@@ -56,7 +56,7 @@ export default function LoginRoute() {
                 <Button type="submit">Submit</Button>
             </Form>
 
-            <Link to="/register">
+            <Link to="/auth/register">
                 Register
             </Link>
         </div>

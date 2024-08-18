@@ -83,7 +83,7 @@ export default function RegisterRoute() {
         </div>
         <Button type="submit">Submit</Button>
       </Form>
-      <Link to="/login">
+      <Link to="/auth">
         Login
       </Link>
     </div>

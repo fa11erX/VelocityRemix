@@ -30,10 +30,10 @@ export default function Navigation() {
                     </div>
                 </SheetContent>
             </Sheet>
-            <div className="mr-6 hidden lg:flex">
+            <Link to="/" className="mr-6 hidden lg:flex">
                 <MountainIcon className="h-6 w-6" />
                 <span className="sr-only">Acme Inc</span>
-            </div>
+            </Link>
             <nav className="ml-auto hidden lg:flex gap-6">
                 <Link
                     className={buttonVariants({ variant: "link" })} to="/"
