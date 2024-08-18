@@ -7,7 +7,7 @@ async function seed() {
 
 
 	console.time('🔑 Created permissions...')
-	const entities = ['user', 'note']
+	const entities = ['posts']
 	const actions = ['create', 'read', 'update', 'delete']
 	const accesses = ['own', 'any'] as const
 

@@ -4,7 +4,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { H2 } from "@/components/ui/typographie";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { prisma } from "@/services/db.server";
 import { createUser } from "@/services/auth.server";
@@ -42,23 +42,8 @@ export async function action({
       { status: submission.status === 'error' ? 400 : 200 },
     )
   }
-  return redirect('/dashboard')
+  return redirect('/login')
 
-}
-
-export default function AuthRoute() {
-  return (
-    <div className="flex flex-1">
-      <div className="flex flex-col items-center flex-1 flex-shrink-0 px-5 pt-16 pb-8 border-r">
-        <div className="flex-1 flex flex-col justify-center w-[330px] sm:w-[384px]">
-          <AccountForm />
-        </div>
-      </div>
-      <div className="flex-col items-center justify-center flex-1 flex-shrink hidden basis-1/4 xl:flex">
-        Lorem ipsum
-      </div>
-    </div>
-  );
 }
 
 const schema = z.object({
@@ -70,7 +55,7 @@ const schema = z.object({
   }),
 });
 
-function AccountForm() {
+export default function RegisterRoute() {
 
   const actionData = useActionData<typeof action>()
 
@@ -98,6 +83,9 @@ function AccountForm() {
         </div>
         <Button type="submit">Submit</Button>
       </Form>
+      <Link to="/login">
+        Login
+      </Link>
     </div>
   );
 }
