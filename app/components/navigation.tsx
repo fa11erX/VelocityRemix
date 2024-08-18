@@ -3,6 +3,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Link } from "@remix-run/react";
 import { SVGProps } from "react";
 import { JSX } from "react/jsx-runtime";
+import { ModeToggle } from "./mode-toggle";
 
 export default function Navigation() {
     return (
@@ -43,6 +44,7 @@ export default function Navigation() {
                 <Link className={buttonVariants({ variant: "default" })} to="/auth" >
                     Sign in
                 </Link>
+                <ModeToggle />
                 {/* <Link
                     className={buttonVariants({ variant: "link" })} to="/dashboard"
                 >

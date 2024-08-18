@@ -1,6 +1,5 @@
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -8,7 +7,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import "./tailwind.css";
-import { themeSessionResolver } from "./.server/sessions.server";
+import { themeSessionResolver } from "./services/sessions.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from "remix-themes";
 import clsx from "clsx";
@@ -36,7 +35,6 @@ export function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   )

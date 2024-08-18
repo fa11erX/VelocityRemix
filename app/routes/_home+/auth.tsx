@@ -1,26 +1,57 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from '@conform-to/react';
+import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { H2 } from "@/components/ui/typographie";
+import { Form, useActionData } from "@remix-run/react";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { prisma } from "@/services/db.server";
+import { createUser } from "@/services/auth.server";
 
-const formSchema = z.object({
-  email: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
-  }),
-  password: z.string().min(2, {
-    message: "Password must be at least 2 characters.",
-  }),
-});
+
+export async function action({
+  request,
+}: ActionFunctionArgs) {
+  const formData = await request.formData();
+
+  const submission = await parseWithZod(formData, {
+    schema: schema.superRefine(async (data, ctx) => {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: data.email },
+        select: { id: true },
+      })
+      if (existingUser) {
+        ctx.addIssue({
+          path: ['email'],
+          code: z.ZodIssueCode.custom,
+          message: 'A user already exists with this email',
+        })
+        return
+      }
+    }).transform(async (data) => {
+      const session = await createUser({ ...data })
+      return { ...data, session }
+    }),
+    async: true,
+  })
+
+  if (submission.status !== 'success') {
+    return json(
+      { result: submission.reply() },
+      { status: submission.status === 'error' ? 400 : 200 },
+    )
+  }
+  return redirect('/dashboard')
+
+}
 
 export default function AuthRoute() {
   return (
     <div className="flex flex-1">
       <div className="flex flex-col items-center flex-1 flex-shrink-0 px-5 pt-16 pb-8 border-r">
         <div className="flex-1 flex flex-col justify-center w-[330px] sm:w-[384px]">
-          <CreateAccountForm />
+          <AccountForm />
         </div>
       </div>
       <div className="flex-col items-center justify-center flex-1 flex-shrink hidden basis-1/4 xl:flex">
@@ -30,53 +61,43 @@ export default function AuthRoute() {
   );
 }
 
-function CreateAccountForm() {
+const schema = z.object({
+  email: z.string().min(2, {
+    message: "Email must be at least 2 characters.",
+  }),
+  password: z.string().min(2, {
+    message: "Password must be at least 2 characters.",
+  }),
+});
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
+function AccountForm() {
+
+  const actionData = useActionData<typeof action>()
+
+  const [form, fields] = useForm({
+    lastResult: actionData?.result,
+    shouldRevalidate: 'onBlur',
+    constraint: getZodConstraint(schema),
+    onValidate({ formData }) {
+      const result = parseWithZod(formData, { schema: schema })
+      return result
     },
   });
 
-  // Handle form submission with validated values
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values); // Replace with actual form submission logic
-  }
-
   return (
-    <Form {...form}>
+    <div>
       <H2>Create account</H2>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Adresse email" aria-label="Email Address" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="Your password" aria-label="Password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <Form method="post" id={form.id} onSubmit={form.onSubmit} className="space-y-8">
+        <div className="">
+          <Input type="email" placeholder="Email" name={fields.email.name} />
+          <div>{fields.email.errors}</div>
+        </div>
+        <div className="">
+          <Input type="password" placeholder="Password" name={fields.password.name} />
+          <div>{fields.password.errors}</div>
+        </div>
         <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+      </Form>
+    </div>
   );
 }
