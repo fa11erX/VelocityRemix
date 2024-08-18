@@ -42,6 +42,26 @@ export async function getUserId(request: Request) {
 	return session.user.id
 }
 
+export async function requireUserId(
+	request: Request,
+	{ redirectTo }: { redirectTo?: string | null } = {},
+) {
+	const userId = await getUserId(request)
+	if (!userId) {
+		const requestUrl = new URL(request.url)
+		redirectTo =
+			redirectTo === null
+				? null
+				: redirectTo ?? `${requestUrl.pathname}${requestUrl.search}`
+		const loginParams = redirectTo ? new URLSearchParams({ redirectTo }) : null
+		const loginRedirect = ['/auth', loginParams?.toString()]
+			.filter(Boolean)
+			.join('?')
+		throw redirect(loginRedirect)
+	}
+	return userId
+}
+
 export async function createUser({
 	email,
 	password,
