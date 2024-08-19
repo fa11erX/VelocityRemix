@@ -1,18 +1,21 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Button } from "@/components/ui/button";
 import { useForm } from '@conform-to/react';
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
-import { H2 } from "@/components/ui/typographie";
+import { H3 } from "@/components/ui/typographie";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { prisma } from "@/services/db.server";
-import { createUser } from "@/services/auth.server";
+import { createUser, requireAnonymous } from "@/services/auth.server";
 
 
 export async function action({
   request,
 }: ActionFunctionArgs) {
+  await requireAnonymous(request)
+
   const formData = await request.formData();
 
   const submission = await parseWithZod(formData, {
@@ -71,21 +74,33 @@ export default function RegisterRoute() {
 
   return (
     <div>
-      <H2>Create account</H2>
-      <Form method="post" id={form.id} onSubmit={form.onSubmit} className="space-y-8">
-        <div className="">
-          <Input type="email" placeholder="Email" name={fields.email.name} />
-          <div>{fields.email.errors}</div>
-        </div>
-        <div className="">
-          <Input type="password" placeholder="Password" name={fields.password.name} />
-          <div>{fields.password.errors}</div>
-        </div>
-        <Button type="submit">Submit</Button>
-      </Form>
-      <Link to="/auth">
-        Login
-      </Link>
+      <div className="flex flex-col p-6 space-y-1">
+        <H3>Create an account</H3>
+        <p className="text-sm text-muted-foreground">
+          Enter your email below to create your account</p>
+      </div>
+      <div className="p-6 pt-0 grid gap-4">
+        <Form method="post" id={form.id} onSubmit={form.onSubmit} className="space-y-8">
+          <div className="">
+            <Input type="email" placeholder="Email" name={fields.email.name} />
+            <div>{fields.email.errors}</div>
+          </div>
+          <div className="">
+            <Input type="password" placeholder="Password" name={fields.password.name} />
+            <div>{fields.password.errors}</div>
+          </div>
+          <div className="flex items-center pt-0">
+            <Button type="submit" className="w-full">Create account</Button>
+          </div>
+        </Form>
+      </div>
+      <div className="p-6 pt-0 grid gap-4 text-center">
+        <Link to="/auth">
+          <p className="text-sm">
+            Have an account? Login now
+          </p>
+        </Link>
+      </div>
     </div>
   );
 }

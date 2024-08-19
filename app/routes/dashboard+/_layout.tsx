@@ -2,7 +2,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { SidebarBody, SidebarLink, Sidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils/cn";
 import { requireUserId } from "@/services/auth.server";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, Outlet } from "@remix-run/react";
 import { IconBrandTabler, IconSettings, IconArrowLeft, IconReport } from "@tabler/icons-react";
 import { motion } from "framer-motion";
@@ -41,6 +41,7 @@ const links = [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await requireUserId(request)
+  return json({})
 }
 
 

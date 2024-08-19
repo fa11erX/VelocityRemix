@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import { Authenticator } from "remix-auth";
 import { authSessionStorage } from "./sessions.server";
 import { prisma } from "./db.server";
-import { User } from '@prisma/client'
+import { Password, User } from '@prisma/client'
 import { redirect } from '@remix-run/node';
 
 
@@ -18,7 +18,7 @@ export const getSessionExpirationDate = () =>
 export async function requireAnonymous(request: Request) {
 	const userId = await getUserId(request)
 	if (userId) {
-		throw redirect('/')
+		throw redirect('/dashboard')
 	}
 }
 
@@ -93,6 +93,47 @@ export async function createUser({
 
 	return session
 
+}
+
+export async function login({
+	email,
+	password,
+}: {
+	email: User['email']
+	password: string
+}) {
+	const user = await verifyUserPassword({ email }, password)
+	if (!user) return null
+	const session = await prisma.session.create({
+		select: { id: true, expirationDate: true, userId: true },
+		data: {
+			expirationDate: getSessionExpirationDate(),
+			userId: user.id,
+		},
+	})
+	return session
+}
+
+export async function verifyUserPassword(
+	where: Pick<User, 'email'> | Pick<User, 'id'>,
+	password: Password['hash'],
+) {
+	const userWithPassword = await prisma.user.findUnique({
+		where,
+		select: { id: true, password: { select: { hash: true } } },
+	})
+
+	if (!userWithPassword || !userWithPassword.password) {
+		return null
+	}
+
+	const isValid = await bcrypt.compare(password, userWithPassword.password.hash)
+
+	if (!isValid) {
+		return null
+	}
+
+	return { id: userWithPassword.id }
 }
 
 
