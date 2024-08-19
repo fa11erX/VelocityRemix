@@ -25,7 +25,7 @@ export default function Index() {
           </ul>
         ) : (
           <p>
-            <i>No contacts</i>
+            <i>No posts</i>
           </p>
         )}
       </div>
