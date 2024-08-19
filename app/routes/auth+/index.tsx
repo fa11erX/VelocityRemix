@@ -91,8 +91,6 @@ export default function LoginRoute() {
     const [searchParams] = useSearchParams()
     const redirectTo = searchParams.get('redirectTo')
 
-    console.log(redirectTo)
-
     const [form, fields] = useForm({
         lastResult: actionData?.result,
         shouldRevalidate: 'onBlur',
