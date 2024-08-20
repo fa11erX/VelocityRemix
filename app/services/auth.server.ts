@@ -4,6 +4,8 @@ import { authSessionStorage } from "./sessions.server";
 import { prisma } from "./db.server";
 import { Password, User } from '@prisma/client'
 import { redirect } from '@remix-run/node';
+import { safeRedirect } from 'remix-utils/safe-redirect';
+import { combineHeaders, combineResponseInits } from '@/utils/misc.server';
 
 
 export const authenticator = new Authenticator<User>(authSessionStorage);
@@ -28,6 +30,7 @@ export async function getUserId(request: Request) {
 	)
 	const sessionId = authSession.get(sessionKey)
 	if (!sessionId) return null
+	console.log('get session')
 	const session = await prisma.session.findUnique({
 		select: { user: { select: { id: true } } },
 		where: { id: sessionId, expirationDate: { gt: new Date() } },
@@ -140,4 +143,65 @@ export async function verifyUserPassword(
 export async function getPasswordHash(password: string) {
 	const hash = await bcrypt.hash(password, 10)
 	return hash
+}
+
+export async function logout(
+	{
+		request,
+		redirectTo = '/',
+	}: {
+		request: Request
+		redirectTo?: string
+	},
+	responseInit?: ResponseInit,
+) {
+	const authSession = await authSessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const sessionId = authSession.get(sessionKey)
+	// if this fails, we still need to delete the session from the user's browser
+	// and it doesn't do any harm staying in the db anyway.
+	if (sessionId) {
+		// the .catch is important because that's what triggers the query.
+		// learn more about PrismaPromise: https://www.prisma.io/docs/orm/reference/prisma-client-reference#prismapromise-behavior
+		void prisma.session.deleteMany({ where: { id: sessionId } }).catch(() => { })
+	}
+	throw redirect(safeRedirect(redirectTo), {
+		...responseInit,
+		headers: combineHeaders(
+			{ 'set-cookie': await authSessionStorage.destroySession(authSession) },
+			responseInit?.headers,
+		),
+	})
+}
+
+interface CreateUserSessionArgs {
+	request: Request;
+	session: {
+		id: string,
+		expirationDate: Date,
+		userId: string
+	};
+	redirectTo?: string;
+}
+
+
+export async function createUserSession({
+	request,
+	session,
+	redirectTo = '/dashboard',
+}: CreateUserSessionArgs): Promise<Response> {
+	const authSession = await authSessionStorage.getSession(
+		request.headers.get('cookie'),
+	);
+
+	authSession.set(sessionKey, session.id);
+
+	const responseInit: ResponseInit = combineResponseInits({
+		headers: {
+			'set-cookie': await authSessionStorage.commitSession(authSession),
+		},
+	});
+
+	return redirect(safeRedirect(redirectTo), responseInit);
 }

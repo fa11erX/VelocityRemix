@@ -1,9 +1,10 @@
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
 import { SidebarBody, SidebarLink, Sidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils/cn";
 import { requireUserId } from "@/services/auth.server";
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, Outlet } from "@remix-run/react";
+import { Form, Link, Outlet } from "@remix-run/react";
 import { IconBrandTabler, IconSettings, IconArrowLeft, IconReport } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -28,13 +29,6 @@ const links = [
     href: "#",
     icon: (
       <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    ),
-  },
-  {
-    label: "Logout",
-    href: "#",
-    icon: (
-      <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
   },
 ];
@@ -62,6 +56,12 @@ export default function DashboardLayout() {
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
+              <Form action="/auth/logout" method="POST">
+                <Button type="submit" variant="link">
+                  <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                  logout
+                </Button>
+              </Form>
             </div>
           </div>
           <div>

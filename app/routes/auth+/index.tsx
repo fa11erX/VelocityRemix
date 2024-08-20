@@ -3,14 +3,11 @@ import { Button } from "@/components/ui/button";
 import { getInputProps, useForm } from '@conform-to/react';
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { z } from "zod";
-import { safeRedirect } from 'remix-utils/safe-redirect'
 import { Input } from "@/components/ui/input";
 import { H3 } from "@/components/ui/typographie";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { ActionFunctionArgs, json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { login, requireAnonymous, sessionKey } from "@/services/auth.server";
-import { authSessionStorage } from "@/services/sessions.server";
-import { combineResponseInits } from "@/utils/misc.server";
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
+import { createUserSession, login, requireAnonymous } from "@/services/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
     await requireAnonymous(request)
@@ -52,24 +49,7 @@ export async function action({
 
     const { session, redirectTo } = submission.value
 
-
-    const authSession = await authSessionStorage.getSession(
-        request.headers.get('cookie'),
-    )
-    authSession.set(sessionKey, session.id)
-
-    console.log(redirectTo)
-
-    return redirect(
-        safeRedirect(redirectTo),
-        combineResponseInits(
-            {
-                headers: {
-                    'set-cookie': await authSessionStorage.commitSession(authSession)
-                },
-            },
-        ),
-    )
+    return await createUserSession({request, session, redirectTo})
 
 }
 
