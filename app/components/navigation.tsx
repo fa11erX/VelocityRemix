@@ -4,8 +4,10 @@ import { Link } from "@remix-run/react";
 import { SVGProps } from "react";
 import { JSX } from "react/jsx-runtime";
 import { ModeToggle } from "./mode-toggle";
+import { useOptionalUser } from "@/utils/user";
 
 export default function Navigation() {
+    const user = useOptionalUser()
     return (
         <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
             <Sheet>
@@ -24,9 +26,11 @@ export default function Navigation() {
                         <Link className={buttonVariants({ variant: "link" })} to="/">
                             Home
                         </Link>
-                        <Link className={buttonVariants({ variant: "link" })} to="/dashboard">
-                            Dashboard
-                        </Link>
+                        {user && (
+                            <Link className={buttonVariants({ variant: "link" })} to="/dashboard">
+                                Dashboard
+                            </Link>
+                        )}
                     </div>
                 </SheetContent>
             </Sheet>
@@ -37,19 +41,19 @@ export default function Navigation() {
             <nav className="ml-auto hidden lg:flex gap-6">
                 <Link
                     className={buttonVariants({ variant: "link" })} to="/"
-
                 >
                     Home
                 </Link>
-                <Link className={buttonVariants({ variant: "default" })} to="/auth" >
-                    Sign in
-                </Link>
+                {user ? (
+                    <Link className={buttonVariants({ variant: "link" })} to="/dashboard">
+                        Dashboard
+                    </Link>
+                ) : (
+                    <Link className={buttonVariants({ variant: "default" })} to="/auth" >
+                        Sign in
+                    </Link>
+                )}
                 <ModeToggle />
-                {/* <Link
-                    className={buttonVariants({ variant: "link" })} to="/dashboard"
-                >
-                    Dashboard
-                </Link> */}
             </nav>
         </header>
     )
@@ -75,7 +79,6 @@ function MenuIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
         </svg>
     )
 }
-
 
 function MountainIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
     return (

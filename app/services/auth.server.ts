@@ -30,7 +30,6 @@ export async function getUserId(request: Request) {
 	)
 	const sessionId = authSession.get(sessionKey)
 	if (!sessionId) return null
-	console.log('get session')
 	const session = await prisma.session.findUnique({
 		select: { user: { select: { id: true } } },
 		where: { id: sessionId, expirationDate: { gt: new Date() } },
