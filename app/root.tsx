@@ -11,11 +11,50 @@ import { themeSessionResolver } from "./services/sessions.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { PreventFlashOnWrongTheme, ThemeProvider, useTheme } from "remix-themes";
 import clsx from "clsx";
+import { getUserId, logout } from "./services/auth.server";
+import { prisma } from "./services/db.server";
+import { makeTimings, time } from "./services/timing.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { getTheme } = await themeSessionResolver(request)
+
+  const timings = makeTimings('root loader')
+  const userId = await time(() => getUserId(request), {
+    timings,
+    type: 'getUserId',
+    desc: 'getUserId in root',
+  })
+
+  const user = userId
+    ? await time(
+      () =>
+        prisma.user.findUniqueOrThrow({
+          select: {
+            id: true,
+            username: true,
+            roles: {
+              select: {
+                name: true,
+                permissions: {
+                  select: { entity: true, action: true, access: true },
+                },
+              },
+            },
+          },
+          where: { id: userId },
+        }),
+      { timings, type: 'find user', desc: 'find user in root' },
+    )
+    : null
+  if (userId && !user) {
+    console.info('something weird happened')
+    // something weird happened... The user is authenticated but we can't find
+    // them in the database. Maybe they were deleted? Let's log them out.
+    await logout({ request, redirectTo: '/' })
+  }
   return {
     theme: getTheme(),
+    user,
   }
 }
 
