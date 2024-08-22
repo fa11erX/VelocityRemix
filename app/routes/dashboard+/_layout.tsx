@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils/cn";
 import { requireUserId } from "@/services/auth.server";
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, Outlet } from "@remix-run/react";
-import { IconBrandTabler, IconSettings, IconArrowLeft, IconReport } from "@tabler/icons-react";
+import { IconBrandTabler, IconSettings, IconReport, IconLogout2 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -58,7 +58,8 @@ export default function DashboardLayout() {
               ))}
               <Form action="/auth/logout" method="POST">
                 <Button type="submit" variant="link">
-                  <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                  <IconLogout2
+                    className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
                   logout
                 </Button>
               </Form>
